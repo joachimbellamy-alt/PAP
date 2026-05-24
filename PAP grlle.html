@@ -338,17 +338,21 @@
             }
         }
 
-        function listenToDatabase() {
+       function listenToDatabase() {
             if (!db) return;
             const dbRef = ref(db, 'eleves_6eme');
             onValue(dbRef, (snapshot) => {
                 const data = snapshot.val();
+                // Si la base est vide, on s'assure d'avoir un objet vide plutôt que null
                 localData.students = data || {};
                 saveToLocalStorage();
                 renderStudentsList();
-                if (selectedStudentId) renderActiveStudent();
+                renderActiveStudent(); // Force le rendu même si c'est vide
             }, (error) => {
                 setConnectionStatus('error', error.message);
+                // En cas d'erreur réseau, on affiche quand même les données locales
+                renderStudentsList();
+                renderActiveStudent();
             });
         }
 
